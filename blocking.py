@@ -8,11 +8,12 @@ class Blocking(abc.ABC):
 	
 	# The output of each of the following methods should be defined clearly and shared between all methods implemented by members of the group. 
 	
-	def __init__(self, blocking_module):
+	def __init__(self, blocking_module,**kargs):
 		'''
 		Initialise object
 		Args:
 			blocking_module: String that mentions the blocking module being used.
+                        **kargs: Dictionary containing parameters needed in blocking pipeline. 
 		'''
 		self.blocking_module = blocking_module
 
@@ -20,25 +21,29 @@ class Blocking(abc.ABC):
 	@abc.abstractmethod
 	def read_dataset(filepath_list, *args, **kwargs):
 		'''
-		Accepts datasets as csv file path and returns a List of pandas DataFrame.
+		Accepts list of URI's and returns a List of Pandas DataFrames.
 		Args:
-			filepath_list: List of string path to the dataset
+			filepath_list: List of string path to the dataset.
 			*args: Additional arguments can be mentioned.
+                        **kargs: Parameters for reading datasets.
 
-		Returns: List of Pandas DataFrame
+		Returns: List of Pandas DataFrames
 		'''
 		pass
 
 	@classmethod
 	@abc.abstractmethod
-	def train(dataframe_list, *args, **kwargs):
+	def train(dataframe, *args, **kwargs):
 		'''
-		Accepts list of pandas dataframe to train the model on and returns the trained model
+		Accepts Pandas Dataframe to train the model on and returns the trained model
 		Args:
-			dataframe_list: List of pandas dataframe
-			*args: Additional hyper parameters required for training
+			dataframe: Pandas dataframe with training vectors under 'vectors' column. Row id's 
+                            will be used as node id's in the tree built by the related pairs algorithms. 
+			*args: Empty
+                        **kargs: Dictionary containing requisite parameters for training/building the 
+                            algorithm specified in their original papers/githubs. 
 
-		Returns: Trained tensorflow model
+		Returns: Trained model
 		'''
 		pass
 
@@ -46,28 +51,30 @@ class Blocking(abc.ABC):
 	@abc.abstractmethod
 	def predict(model, dataframe_list, *args, **kwargs):
 		'''
-		Given a trained model and pandas dataframe of datasets, predict() returns a list of pairs of
-		related ids as a list of tuples.
+		Given a trained model and Pandas Dataframe of datasets, predict() returns a list of pairs of
+		    related ids as a list of tuples.
 		Args:
 			model: tensorflow model used to predict.
-			dataframe_list: List of pandas dataframe
-			*args: Additional arguments
+			dataframe_list: List of Pandas Dataframes.
+			*args: Additional arguments.
+                        **kargs: Parameters requisite for prediciting related ids as defined by the original papers/githubs. 
 
-		Returns: List of pairs of elements related in the dataset. List of tuples.
+		Returns: List of pairs of elements related in the dataset. Lists of Lists of tuples [[(id_0,0.99),(id_3,0.95)],...,[(id_5,0.97),(id_1,0.83)]].
 		'''
 		pass
 
 	@classmethod
 	@abc.abstractmethod
-	def evaluate(groundtruth, related_ids, *args, **kwargs):
+	def evaluate(groundtruth, dataframe_list, *args, **kwargs):
 		'''
-		Given a ground truth path and list of pairs of related entities of the dataset, evaluate() returns the Precision,
-		Recall and F1_Score metrics.
+		Given the ground truth and list of dataframes to predict the related ids for, evaluate() returns the Precision,
+		    Recall and Reduction Ratio metrics.
 		Args:
-			groundtruth: String path to the ground truth data
-			related_ids: List of tuple which contains pairs of related entities.
-			*args: If more than 1 Dataset, string dataset path can be mentioned as additional arguments
+			groundtruth: String path to or Dataframe of the ground truth data.
+			dataframe_list: List of Pandas Dataframes with the data to predict the related id's for. 
+			*args: If more than 1 dataset, string dataset path can be mentioned as additional arguments.
+                        **kargs: Parameters requisite for prediciting related ids as defined by the original papers/githubs.
 
-		Returns: Precision, Recall, Block_size_reduction
+		Returns: Precision, Recall, Reduction_Ratio
 		'''
 		pass
