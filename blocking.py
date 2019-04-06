@@ -65,11 +65,12 @@ class Blocking(abc.ABC):
 
 	@classmethod
 	@abc.abstractmethod
-	def evaluate(groundtruth, dataframe_list, *args, **kwargs):
+	def evaluate(model, groundtruth, dataframe_list, *args, **kwargs):
 		'''
 		Given the ground truth and list of dataframes to predict the related ids for, evaluate() returns the Precision,
 		    Recall and Reduction Ratio metrics.
 		Args:
+			model: tensorflow model used to predict.
 			groundtruth: String path to or Dataframe of the ground truth data.
 			dataframe_list: List of Pandas Dataframes with the data to predict the related id's for. 
 			*args: If more than 1 dataset, string dataset path can be mentioned as additional arguments.
